@@ -1,7 +1,7 @@
 const express = require('express');
 const sweph = require('sweph');
 const cors = require('cors');
-const { Kosmos } = require('kosmos'); // Importando o pacote com o nome correto
+const Kosmos = require('kosmos'); // LINHA CORRIGIDA - Importando o pacote da maneira certa
 
 // Importar nosso dicionário de constantes
 const {
