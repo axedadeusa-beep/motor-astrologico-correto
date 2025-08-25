@@ -30,6 +30,8 @@ app.post('/calculate', async (req, res) => {
         const julianDay = jd_ut_obj.data[0];
 
         // --- 2. CÁLCULO DAS CASAS (PLACIDUS) ---
+        // LINHA DE DEPURAÇÃO ADICIONADA PARA VERIFICAR AS ENTRADAS
+        console.log(`Dados para houses: julianDay=${julianDay}, lat=${lat}, lon=${lon}`);
         const houses = await sweph.houses(julianDay, lat, lon, 'P');
 
         // --- 3. CÁLCULO DOS PLANETAS E PONTOS ---
@@ -63,7 +65,6 @@ app.post('/calculate', async (req, res) => {
             message: "Cálculo de planetas e casas realizado com sucesso!",
             julianDay: julianDay,
             planets: calculatedPlanets,
-            // CORREÇÃO FINAL E DEFINITIVA: Lendo os dados das casas do array 'data'
             houses: {
                 ascendant: houses.data[0],
                 mc: houses.data[1],
