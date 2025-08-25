@@ -16,7 +16,7 @@ app.post('/calculate', async (req, res) => {
         }
         const jd_ut = await sweph.utc_to_jd(year, month, day, hour, 0, 0, 1);
         const julianDay = jd_ut.data[0];
-        const sunPosition = await sweph.calc_ut(julianDay, sweph.SE_SUN, sweph.SEFLG_SPEED);
+        const sunPosition = await sweph.calc_ut(julianDay, 0, 256);
         const responseData = {
             message: "Cálculo realizado com sucesso!",
             julianDay: julianDay,
