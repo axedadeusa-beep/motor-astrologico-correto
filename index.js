@@ -1,8 +1,10 @@
 const express = require('express');
 const sweph = require('sweph');
+const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 3000;
 app.use(express.json());
+app.use(cors());
 
 sweph.set_ephe_path(__dirname + '/node_modules/sweph/ephe');
 
