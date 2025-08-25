@@ -1,7 +1,7 @@
 const express = require('express');
 const sweph = require('sweph');
 const cors = require('cors');
-const { Kosmos } = require('kosmos-js'); // Importando a nova biblioteca de casas
+const { Kosmos } = require('kosmos'); // Importando o pacote com o nome correto
 
 // Importar nosso dicionário de constantes
 const {
@@ -50,8 +50,7 @@ app.post('/calculate', async (req, res) => {
             };
         }
 
-        // --- 2. CÁLCULO DAS CASAS (com kosmos-js) ---
-        // A biblioteca kosmos-js precisa de um objeto Date do JavaScript
+        // --- 2. CÁLCULO DAS CASAS (com kosmos) ---
         const date = new Date(Date.UTC(year, month - 1, day, Math.floor(hour), (hour % 1) * 60));
         const chart = new Kosmos({
             date: date,
