@@ -15,7 +15,7 @@ app.post('/calculate', async (req, res) => {
             return res.status(400).json({ error: 'Dados de entrada incompletos.' });
         }
         const jd_ut = await sweph.utc_to_jd(year, month, day, hour, 0, 0, 1);
-        const julianDay = jd_ut.jd;
+        const julianDay = jd_ut.julianDayUT;
         const sunPosition = await sweph.calc_ut(julianDay, sweph.SE_SUN, sweph.SEFLG_SPEED);
         const responseData = {
             message: "Cálculo realizado com sucesso!",
