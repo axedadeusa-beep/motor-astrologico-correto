@@ -1,7 +1,7 @@
 const express = require('express');
 const sweph = require('sweph');
 const cors = require('cors');
-// Importar nosso novo dicionário de constantes
+// Importar nosso dicionário de constantes
 const {
     SE_SUN, SE_MOON, SE_MERCURY, SE_VENUS, SE_MARS, SE_JUPITER, SE_SATURN,
     SE_URANUS, SE_NEPTUNE, SE_PLUTO, SE_TRUE_NODE, SE_CHIRON, SEFLG_SPEED
@@ -63,7 +63,7 @@ app.post('/calculate', async (req, res) => {
             message: "Cálculo de planetas e casas realizado com sucesso!",
             julianDay: julianDay,
             planets: calculatedPlanets,
-            // CORREÇÃO FINAL: Pegando os dados das casas do array 'data'
+            // CORREÇÃO FINAL E DEFINITIVA: Lendo os dados das casas do array 'data'
             houses: {
                 ascendant: houses.data[0],
                 mc: houses.data[1],
