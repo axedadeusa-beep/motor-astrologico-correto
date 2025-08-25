@@ -1,6 +1,8 @@
 const express = require('express');
 const sweph = require('sweph');
 const cors = require('cors');
+const { Kosmos } = require('kosmos-js'); // Importando a nova biblioteca de casas
+
 // Importar nosso dicionário de constantes
 const {
     SE_SUN, SE_MOON, SE_MERCURY, SE_VENUS, SE_MARS, SE_JUPITER, SE_SATURN,
@@ -12,7 +14,7 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(cors());
 
-// Configura o caminho para os arquivos de efemérides
+// Configura o caminho para os arquivos de efemérides do sweph
 sweph.set_ephe_path(__dirname + '/node_modules/sweph/ephe');
 
 // A rota principal da nossa API
@@ -25,29 +27,17 @@ app.post('/calculate', async (req, res) => {
             return res.status(400).json({ error: 'Dados de entrada incompletos.' });
         }
 
-        // --- 1. CÁLCULO DO DIA JULIANO ---
+        // --- 1. CÁLCULO DO DIA JULIANO E PLANETAS (com sweph) ---
         const jd_ut_obj = await sweph.utc_to_jd(year, month, day, hour, 0, 0, 1);
         const julianDay = jd_ut_obj.data[0];
 
-        // --- 2. CÁLCULO DAS CASAS (PLACIDUS) ---
-        // LINHA DE DEPURAÇÃO ADICIONADA PARA VERIFICAR AS ENTRADAS
-        console.log(`Dados para houses: julianDay=${julianDay}, lat=${lat}, lon=${lon}`);
-        const houses = await sweph.houses(julianDay, lat, lon, 'P');
-
-        // --- 3. CÁLCULO DOS PLANETAS E PONTOS ---
         const planetsToCalc = [
-            { id: SE_SUN, name: 'sun' },
-            { id: SE_MOON, name: 'moon' },
-            { id: SE_MERCURY, name: 'mercury' },
-            { id: SE_VENUS, name: 'venus' },
-            { id: SE_MARS, name: 'mars' },
-            { id: SE_JUPITER, name: 'jupiter' },
-            { id: SE_SATURN, name: 'saturn' },
-            { id: SE_URANUS, name: 'uranus' },
-            { id: SE_NEPTUNE, name: 'neptune' },
-            { id: SE_PLUTO, name: 'pluto' },
-            { id: SE_TRUE_NODE, name: 'north_node' },
-            { id: SE_CHIRON, name: 'chiron' }
+            { id: SE_SUN, name: 'sun' }, { id: SE_MOON, name: 'moon' },
+            { id: SE_MERCURY, name: 'mercury' }, { id: SE_VENUS, name: 'venus' },
+            { id: SE_MARS, name: 'mars' }, { id: SE_JUPITER, name: 'jupiter' },
+            { id: SE_SATURN, name: 'saturn' }, { id: SE_URANUS, name: 'uranus' },
+            { id: SE_NEPTUNE, name: 'neptune' }, { id: SE_PLUTO, name: 'pluto' },
+            { id: SE_TRUE_NODE, name: 'north_node' }, { id: SE_CHIRON, name: 'chiron' }
         ];
 
         const calculatedPlanets = {};
@@ -60,20 +50,25 @@ app.post('/calculate', async (req, res) => {
             };
         }
 
+        // --- 2. CÁLCULO DAS CASAS (com kosmos-js) ---
+        // A biblioteca kosmos-js precisa de um objeto Date do JavaScript
+        const date = new Date(Date.UTC(year, month - 1, day, Math.floor(hour), (hour % 1) * 60));
+        const chart = new Kosmos({
+            date: date,
+            latitude: lat,
+            longitude: lon
+        });
+        const calculatedHouses = chart.getHouses('Placidus');
+
         // --- 4. MONTAR A RESPOSTA FINAL ---
         const responseData = {
             message: "Cálculo de planetas e casas realizado com sucesso!",
             julianDay: julianDay,
             planets: calculatedPlanets,
             houses: {
-                ascendant: houses.data[0],
-                mc: houses.data[1],
-                cusps: [
-                    houses.data[13], houses.data[14], houses.data[15],
-                    houses.data[16], houses.data[17], houses.data[18],
-                    houses.data[19], houses.data[20], houses.data[21],
-                    houses.data[22], houses.data[23], houses.data[24]
-                ]
+                ascendant: calculatedHouses[0].longitude,
+                mc: calculatedHouses[9].longitude,
+                cusps: calculatedHouses.map(cusp => cusp.longitude)
             }
         };
 
