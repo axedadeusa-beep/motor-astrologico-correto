@@ -17,15 +17,15 @@ app.post('/calculate', async (req, res) => {
         const jd_ut = await sweph.utc_to_jd(year, month, day, hour, 0, 0, 1);
         const julianDay = jd_ut.data[0];
         const sunPosition = await sweph.calc_ut(julianDay, 0, 256);
-        const responseData = {
-            message: "Cálculo realizado com sucesso!",
-            julianDay: julianDay,
-            sun: {
-                longitude: sunPosition.longitude,
-                latitude: sunPosition.latitude,
-                speed: sunPosition.longitude_speed
-            }
-        };
+  const responseData = {
+    message: "Cálculo realizado com sucesso!",
+    julianDay: julianDay,
+    sun: {
+        longitude: sunPosition.data[0],
+        latitude: sunPosition.data[1],
+        speed: sunPosition.data[3]
+    }
+};
         res.status(200).json(responseData);
     } catch (error) {
         res.status(500).json({ error: 'Erro interno ao realizar o cálculo.', details: error.toString() });
