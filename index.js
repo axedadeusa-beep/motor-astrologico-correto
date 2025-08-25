@@ -21,8 +21,8 @@ app.post('/calculate', async (req, res) => {
         }
 
         // --- 1. CÁLCULO DO DIA JULIANO ---
-        const jd_ut_obj = await sweph.utc_to_jd(year, month, day, hour, 0, 0, 1); // 1 = Calendário Gregoriano
-        const julianDay = jd_ut_obj.jd; // LINHA CORRIGIDA
+        const jd_ut_obj = await sweph.utc_to_jd(year, month, day, hour, 0, 0, 1);
+        const julianDay = jd_ut_obj.data[0]; // LINHA CORRIGIDA COM BASE NO SEU LOG
 
         // --- 2. CÁLCULO DAS CASAS (PLACIDUS) ---
         const houses = await sweph.houses(julianDay, lat, lon, 'P'); // 'P' para Placidus
